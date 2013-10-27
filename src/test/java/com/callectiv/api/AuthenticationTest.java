@@ -29,16 +29,35 @@ public class AuthenticationTest {
     }
 
     @Test
-    public void testAuthenticationXML() {
+    public void testAuthenticationSuccessXML() {
 	given().body(auth, ObjectMapper.JAXB).contentType("application/xml").expect().statusCode(200)
 		.body(hasXPath("/authorization/token")).body(hasXPath("/authorization/@expiryTime")).when()
 		.post("/authentication");
     }
 
     @Test
-    public void testAuthenticationJSON() {
+    public void testAuthenticationSuccessJSON() {
 	given().body(auth, ObjectMapper.JACKSON).contentType("application/json").expect().statusCode(200)
 		.body(hasXPath("/authorization/token")).body(hasXPath("/authorization/@expiryTime")).when()
+		.post("/authentication");
+    }
+
+    @Test
+    public void testAuthenticationFailureXML() {
+	auth.setApikey("somerandomcrap");
+	auth.setSecret("morerandomcrap");
+
+	given().body(auth, ObjectMapper.JAXB).contentType("application/xml").expect().statusCode(401).when()
+		.post("/authentication");
+    }
+
+    @Test
+    public void testAuthenticationFailureJSON() {
+
+	auth.setApikey("anyrandomcrap");
+	auth.setSecret("definitelyrandomcrap");
+
+	given().body(auth, ObjectMapper.JACKSON).contentType("application/json").expect().statusCode(401).when()
 		.post("/authentication");
     }
 
