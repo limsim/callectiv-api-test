@@ -36,7 +36,8 @@ public class RegisterSubjectTest {
 
         given()
                 .header("Authorization", authToken).contentType("application/json")
-                .body(subjectResource, ObjectMapper.JACKSON)
+                .header("Accept", "application/json")
+                .body(subjectResource, ObjectMapper.GSON)
 //                .body("{\n" +
 //                        "  \"reference\": \"joblisting-4568903\",\n" +
 //                        "  \"contact\": { \"phone\": \"85285228607805\" },\n" +

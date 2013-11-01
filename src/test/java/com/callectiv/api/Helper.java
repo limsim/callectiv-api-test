@@ -30,10 +30,11 @@ public class Helper {
         RestAssured.baseURI = System.getProperty("api.host");
         RestAssured.port = 80;
 
-        XmlPath xmlPath = given().body(auth, ObjectMapper.JACKSON).contentType("application/json").expect().statusCode(200)
-                .when().post("/authentication").xmlPath();
+        JsonPath jsonPath = given().body(auth, ObjectMapper.JACKSON).contentType("application/json").header("Accept", "application/json")
+                .expect().statusCode(200)
+                .when().post("/authentication").jsonPath();
 
-        return xmlPath.getString("/authorization/token");
+        return jsonPath.getString("token");
     }
 
     public static AuthResource getAuth() {
