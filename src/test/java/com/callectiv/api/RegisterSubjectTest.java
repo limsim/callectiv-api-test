@@ -2,18 +2,12 @@ package com.callectiv.api;
 
 import com.callectiv.api.resources.ContactResource;
 import com.jayway.restassured.mapper.ObjectMapper;
-import com.pholser.junit.quickcheck.ForAll;
-import com.pholser.junit.quickcheck.From;
-import com.pholser.junit.quickcheck.generator.InRange;
 import org.junit.Test;
 
 import static com.callectiv.api.Helper.autheticateWithJson;
 import static com.callectiv.api.Helper.getAuth;
 import static com.jayway.restassured.RestAssured.given;
 import com.callectiv.api.resources.SubjectResource;
-import org.junit.contrib.theories.Theories;
-import org.junit.contrib.theories.Theory;
-import org.junit.runner.RunWith;
 
 import java.util.Random;
 import java.util.UUID;
@@ -25,33 +19,42 @@ import java.util.UUID;
  * Time: 22:48
  * To change this template use File | Settings | File Templates.
  */
-@RunWith(Theories.class)
 public class RegisterSubjectTest {
 
-    @Theory
-    public void registerSubject(@ForAll String reference, @ForAll String message, @ForAll long phone) {
+    @Test
+    public void registerSubject() {
         String authToken = autheticateWithJson(getAuth());
 
         ContactResource contactResource = new ContactResource();
-        contactResource.setPhone(String.valueOf(phone));
+        contactResource.setPhone("447904181648");
 
         SubjectResource subjectResource = new SubjectResource();
-        subjectResource.setReference(reference);
+        subjectResource.setReference("joblisting-4568903");
         subjectResource.setContact(contactResource);
-        subjectResource.setMessage(message);
+        subjectResource.setMessage("Lim testing");
 
 
         given()
                 .header("Authorization", authToken).contentType("application/json")
                 .header("Accept", "application/json")
                 .body(subjectResource, ObjectMapper.GSON)
+//                .body("{\n" +
+//                        "  \"reference\": \"joblisting-4568903\",\n" +
+//                        "  \"contact\": { \"phone\": \"85285228607805\" },\n" +
+//                        "  \"message\": \"A Call about the Help Desk Administrator Job\"\n" +
+//                        "}")
+//                .body("{\n" +
+//                        "\"reference\":\"test150f4b535-9f76-4135-a350-9738cad89588\",\n" +
+//                        "\"contact\":{\"phone\":\"447904181648\"},\n" +
+//                        "\"message\":\"Lim testing\"\n" +
+//                        "}")
+//                .body("{\n" +
+//                        "  \"reference\": \"joblisting-4568903\",\n" +
+//                        "  \"contact\": { \"phone\": \"447904181648\" },\n" +
+//                        "  \"message\": \"Lim testing\"\n" +
+//                        "}")
                 .expect().statusCode(200)
                 .when().post("/subject").print();
-    }
-
-    @Theory
-    public void StringGeneration(@ForAll String testString, @ForAll String testString2) {
-        System.out.println(testString + " -- ");
     }
 
 }
