@@ -7,6 +7,8 @@ import org.junit.Test;
 import static com.callectiv.api.Helper.autheticateWithJson;
 import static com.callectiv.api.Helper.getAuth;
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+
 import com.callectiv.api.resources.SubjectResource;
 
 import java.util.Random;
@@ -38,22 +40,10 @@ public class RegisterSubjectTest {
                 .header("Authorization", authToken).contentType("application/json")
                 .header("Accept", "application/json")
                 .body(subjectResource, ObjectMapper.GSON)
-//                .body("{\n" +
-//                        "  \"reference\": \"joblisting-4568903\",\n" +
-//                        "  \"contact\": { \"phone\": \"85285228607805\" },\n" +
-//                        "  \"message\": \"A Call about the Help Desk Administrator Job\"\n" +
-//                        "}")
-//                .body("{\n" +
-//                        "\"reference\":\"test150f4b535-9f76-4135-a350-9738cad89588\",\n" +
-//                        "\"contact\":{\"phone\":\"447904181648\"},\n" +
-//                        "\"message\":\"Lim testing\"\n" +
-//                        "}")
-//                .body("{\n" +
-//                        "  \"reference\": \"joblisting-4568903\",\n" +
-//                        "  \"contact\": { \"phone\": \"447904181648\" },\n" +
-//                        "  \"message\": \"Lim testing\"\n" +
-//                        "}")
                 .expect().statusCode(200)
+                .body("contact.phone", equalTo("447904181648"))
+                .body("message", equalTo("Lim testing"))
+                .body("reference", equalTo("joblisting-4568903"))
                 .when().post("/subject").print();
     }
 
