@@ -1,6 +1,8 @@
 package com.callectiv.api;
 
 import com.callectiv.api.resources.AuthResource;
+import com.callectiv.api.resources.ContactResource;
+import com.callectiv.api.resources.SubjectResource;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.mapper.ObjectMapper;
 import com.jayway.restassured.path.json.JsonPath;
@@ -44,4 +46,14 @@ public class Helper {
         return auth;
     }
 
+    public static SubjectResource getSubjectResource(String phone, String reference, String message) {
+        ContactResource contactResource = new ContactResource();
+        contactResource.setPhone(phone);
+
+        SubjectResource subjectResource = new SubjectResource();
+        subjectResource.setReference(reference);
+        subjectResource.setContact(contactResource);
+        subjectResource.setMessage(message);
+        return subjectResource;
+    }
 }
