@@ -32,7 +32,8 @@ public class RegisterSubjectTest {
 
     @Test
     public void registerSubject() {
-        SubjectResource subjectResource = getSubjectResource("447904181648", "item40_cust8945.2012", "Lim testing");
+    	String reference = "item40_cust8945.2012" + Math.random();
+        SubjectResource subjectResource = getSubjectResource("447904181648",reference , "Lim testing");
 
         given()
                 .header("Authorization", authToken).contentType("application/json")
@@ -41,7 +42,7 @@ public class RegisterSubjectTest {
                 .expect().statusCode(200)
                 .body("contact.phone", equalTo("447904181648"))
                 .body("message", equalTo("Lim testing"))
-                .body("reference", equalTo("item40_cust8945.2012"))
+                .body("reference", equalTo(reference))
                 .when().post("/subject").print();
     }
 
@@ -49,7 +50,8 @@ public class RegisterSubjectTest {
 
     @Test
     public void registerWithLongReferenceWillWork() throws Exception {
-        SubjectResource subjectResource = getSubjectResource("447904181648", "joblisting-4568903", "Lim testing");
+    	String reference = "joblisting-4568903" + Math.random();
+        SubjectResource subjectResource = getSubjectResource("447904181648", reference, "Lim testing");
         checkStatusCode(subjectResource, 200);
     }
 
