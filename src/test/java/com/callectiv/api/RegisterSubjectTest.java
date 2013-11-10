@@ -1,12 +1,13 @@
 package com.callectiv.api;
 
-import com.callectiv.api.resources.ContactResource;
 import com.jayway.restassured.mapper.ObjectMapper;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import static com.callectiv.api.Helper.autheticateWithJson;
 import static com.callectiv.api.Helper.getAuth;
+import static com.callectiv.api.Helper.getSubjectResource;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -46,18 +47,27 @@ public class RegisterSubjectTest {
                 .when().post("/subject").print();
     }
 
-
-
     @Test
     public void registerWithLongReferenceWillWork() throws Exception {
-    	String reference = "joblisting-4568903" + Math.random();
-        SubjectResource subjectResource = getSubjectResource("447904181648", reference, "Lim testing");
+        SubjectResource subjectResource = getSubjectResource("447904181648", "joblisting-" + UUID.randomUUID(), "Lim testing");
         checkStatusCode(subjectResource, 200);
     }
 
     @Test
     public void registerWithNoMessageWillReturn400StatusCode() throws Exception {
         SubjectResource subjectResource = getSubjectResource("447904181648", "joblisting-4568903", null);
+        checkStatusCode(subjectResource, 400);
+    }
+
+    @Test
+    public void registerWithNoReferenceWillReturn400StatusCode() throws Exception {
+        SubjectResource subjectResource = getSubjectResource("447904181648", null, "asd lasdkjf3 \n");
+        checkStatusCode(subjectResource, 400);
+    }
+
+    @Test
+    public void registerWithNoPhoneNumberWillReturn400StatusCode() throws Exception {
+        SubjectResource subjectResource = getSubjectResource(null, "joblisting-4568903", "asd lasdkjf3 \n");
         checkStatusCode(subjectResource, 400);
     }
 
@@ -79,6 +89,19 @@ public class RegisterSubjectTest {
         checkStatusCode(subjectResource, 200);
     }
 
+    @Test
+    public void referenceThatIs128CharLongIsOK() throws Exception {
+        SubjectResource subjectResource = getSubjectResource("447904181648", RandomStringUtils.randomAscii(128), "Lim testing");
+        checkStatusCode(subjectResource, 200);
+    }
+
+    @Test
+    public void referenceThatIsLongerThan128CharIsNotOK() throws Exception {
+        SubjectResource subjectResource = getSubjectResource("447904181648", RandomStringUtils.randomAscii(129), "Lim testing");
+        checkStatusCode(subjectResource, 400);
+    }
+
+
     // HELPER
     private void checkStatusCode(SubjectResource subjectResource, int expectedStatusCode) {
         given()
@@ -89,14 +112,4 @@ public class RegisterSubjectTest {
                 .when().post("/subject").print();
     }
 
-    private SubjectResource getSubjectResource(String phone, String reference, String message) {
-        ContactResource contactResource = new ContactResource();
-        contactResource.setPhone(phone);
-
-        SubjectResource subjectResource = new SubjectResource();
-        subjectResource.setReference(reference);
-        subjectResource.setContact(contactResource);
-        subjectResource.setMessage(message);
-        return subjectResource;
-    }
 }
