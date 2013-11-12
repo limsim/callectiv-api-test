@@ -7,6 +7,7 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.mapper.ObjectMapper;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.path.xml.XmlPath;
+import com.jayway.restassured.response.Response;
 
 import static com.jayway.restassured.RestAssured.given;
 
@@ -55,5 +56,14 @@ public class Helper {
         subjectResource.setContact(contactResource);
         subjectResource.setMessage(message);
         return subjectResource;
+    }
+
+    public static Response registerSubject(String authToken, SubjectResource subjectResource) {
+        return given()
+                .header("Authorization", authToken).contentType("application/json")
+                .header("Accept", "application/json")
+                .body(subjectResource, ObjectMapper.GSON)
+                .expect().statusCode(200)
+                .when().post("/subject");
     }
 }
